@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>http://127.0.0.1:2368/</link><generator>Ghost 0.6</generator><lastBuildDate>Wed, 12 Aug 2015 01:21:54 GMT</lastBuildDate><atom:link href="http://127.0.0.1:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Streams in JavaScript]]></title><description><![CDATA[<p><em>Time is but the stream I go a-fishing in.</em></p>
+
+<p>-Henry David Thoreau</p>
+
+<p>Recently I was rereading <a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and Interpretation of Computer Programs</a> by Abelson and Sussman and was hooked by the section on streams. Streams allow one to reason about stateful phenomena while mitigating "some of the complexities of modeling</p>]]></description><link>http://127.0.0.1:2368/streams-in-javascript/</link><guid isPermaLink="false">603f9b69-0e0f-4ef2-93c4-3326750cc1de</guid><dc:creator><![CDATA[Harry Whelchel]]></dc:creator><pubDate>Sun, 18 May 2014 02:23:40 GMT</pubDate><content:encoded><![CDATA[<p><em>Time is but the stream I go a-fishing in.</em></p>
+
+<p>-Henry David Thoreau</p>
+
+<p>Recently I was rereading <a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and Interpretation of Computer Programs</a> by Abelson and Sussman and was hooked by the section on streams. Streams allow one to reason about stateful phenomena while mitigating "some of the complexities of modeling state".  </p>
+
+<p>A stream is a data structure representing the history of values for a system across time. Imagine physics' <a href="http://en.wikipedia.org/wiki/World_line">world line</a> concept applied to any system or phenomena. If one thinks about the life of an apple over time it ages. But if one considers the entire history of the apple through time that function is constant with respect to time. I decided it would be fun to implement this concept in JavaScript.</p>
+
+<h4 id="implementation">Implementation</h4>
+
+<p>To easily model a stream implement it as a delayed list. This means the <strong>head</strong> of the list will be the current value and the <strong>tail</strong> will be a <strong>promise</strong> to evaluate the next element in the stream. In SICP the authors use the delay method to convert a tail into a promise and then use the force method to evaluate the promise.</p>
+
+<pre><code>function Stream(head, tail) {  
+    this.headValue = head;
+    this.tailValue = this.delay(tail);
+}
+
+Stream.prototype = {  
+  delay: function(tail) {
+    return tail();
+  },
+  force: function(delayedTail){
+    return delayedTail();
+  }
+}
+</code></pre>
+
+<h4 id="application">Application</h4>
+
+<p>Because streams are sequences we can still use sequence methods like enumerating, filtering, accumulating, and mapping but because streams delay evaluation we can perform these manipulations on sequences that are large or infinite in size. </p>
+
+<p>For example I can take a stream representing all integers beginning with the number 2 and run it through the Sieve of Eratosthenes to generate a stream of the prime numbers.</p>
+
+<pre><code>Stream.integersStartingFrom = function(num) {  
+  return new Stream(num, function(){
+    return integersStartingFrom(num += 1);
+  });
+};
+Stream.prototype.sieve = function() {  
+    var self = this;
+    return new Stream(self.head(), function() {
+      return self.tail().filter(function(num) {
+        return !willDivide(self.head(), num);
+        }).sieve();
+    });
+  }
+
+var primes = Stream.integersStartingFrom(2).sieve();  
+console.log(primes.item(50)); // 233  
+</code></pre>
+
+<p>Streams allow the developer to cleanly separate and intuitively reason about these types of tasks across data collections.</p>
+
+<h4 id="improvements">Improvements</h4>
+
+<p>One early improvement to make in a streams library is to memoize the delay method that generates the promise. Rather than reevaluating the tail everytime use a closure to store whether the tail has been evaluated in the past and if so return that result.</p>
+
+<pre><code>Stream.prototype = {
+
+ delay: function(tail) {
+    return this._memoTail(tail);
+  },
+
+  _memoTail: function(tail){
+    var hasRun = false;
+    var result;
+    return function(){
+      if(!hasRun) {
+        result = tail();
+        hasRun = true;
+        return result;
+      } else {
+        return result;
+      }
+    };
+  }
+}
+</code></pre>
+
+<h4 id="practicalusecases">Practical use cases</h4>
+
+<p>Infinite streams of data can be found in many fields from physics, finance, and engineering. In physics as mentioned the world line is the concept of reasoning about an elements' entire history through spacetime. In finance there are many financial assets that exhibit stream like behavior such as <a href="http://en.wikipedia.org/wiki/Perpetuity">perpetuities</a> and <a href="http://en.wikipedia.org/wiki/Market_data">stock market data</a>. In engineering they can be found in the <a href="http://en.wikipedia.org/wiki/Fourier_series">fourier series</a> which has application in electrical engineering, optics, acoustics, and more.</p>
+
+<h4 id="nextsteps">Next steps</h4>
+
+<p>I would like to explore using the stream data structure to model some of the practical applications listed above namely the modeling of financial streams and fourier series.</p>
+
+<h4 id="thecode">The code</h4>
+
+<p>The full code used can be found on my github in the <a href="https://github.com/hwhelchel/streams">streams</a> repository. I would also like to mention the <a href="https://github.com/dionyziz/stream.js">streams.js</a> library by dionyziz which helped jump start my implementation of streams in JavaScript.</p>]]></content:encoded></item><item><title><![CDATA[Recursion in Ruby]]></title><description><![CDATA[<p>Studying Ruby and object oriented programming at Dev Bootcamp we have been working with exercises that lend themselves to recursive thinking. Because recursion was challenging yet often elegant I researched the subject further in the context of the Ruby language. For more here is an excellent resource on <a href="http://kaibun.net/blog/2010/03/17/simple-thought-about-recursion-in-Ruby/">recursion in</a></p>]]></description><link>http://127.0.0.1:2368/recursion-in-ruby/</link><guid isPermaLink="false">e195f71d-3ccc-4830-9006-fd2aafa6954b</guid><dc:creator><![CDATA[Harry Whelchel]]></dc:creator><pubDate>Sun, 18 May 2014 01:02:44 GMT</pubDate><content:encoded><![CDATA[<p>Studying Ruby and object oriented programming at Dev Bootcamp we have been working with exercises that lend themselves to recursive thinking. Because recursion was challenging yet often elegant I researched the subject further in the context of the Ruby language. For more here is an excellent resource on <a href="http://kaibun.net/blog/2010/03/17/simple-thought-about-recursion-in-Ruby/">recursion in Ruby</a> by Jean-Denis Vauguet.</p>
+
+<h2 id="whatisrecursion">What is Recursion?</h2>
+
+<p>Recursion is a method of solving problems by dividing them into the same problem of a smaller size. A recursive method calls itself a certain number of times. It is commonly found in functional languages however imperative languages such as Ruby can make use of recursive algorithms.</p>
+
+<p>Perhaps surprisingly all iterations can be written recursively. Loops that rely on while or until are often intuitive candidates. The while or until loop condition can often be coerced into a recursive base case.</p>
+
+<h4 id="thebasecase">The Base Case</h4>
+
+<p>The key to recursion is limiting the number of method self-calls. To limit the number of calls we must establish a base case. When the base case has been reached the method stops calling itself and begins returning up the chain of method calls.</p>
+
+<h2 id="considerationsforrecursioninruby">Considerations for Recursion in Ruby</h2>
+
+<p>Recursion in Ruby and most imperative languages is considered inefficient. Because almost everything is an object in Ruby, repeated object instantiation can arise in recursive calls, leading to reduced speed. Furthermore additional stack frames are required for each method call's arguments and local variables. Too many recursive calls can lead to stack overflow induced crashes. Tail Call Recursion and Memoization can help reduce the risk of stack overflow. </p>
+
+<h4 id="tailcalloptimization">Tail Call Optimization</h4>
+
+<p>Tail Call Optimization allows recursive method calls without the allocation of additional memory on the stack. Simply put the calling method returns the value it gets from the called method. Therefore recursive methods are implemented in constant stack space eliminating the risk of stack overflow.</p>
+
+<h4 id="memoization">Memoization</h4>
+
+<p>Memoization of a method eliminates repeat calculations of results for prior inputs. A memoized method has a lookup table of prior inputs and outputs that it can use to speed up future calls for new inputs. With the added lookup table, memoization lowers a method's time cost at the expense of added space cost. If methods are well-defined, i.e. they consistently return the same output for given arguments, then this can be an effective tool to reduce the risk of stack overflow.</p>
+
+<h2 id="bogglerecursionexample">Boggle: Recursion Example</h2>
+
+<p>Below is a program the generates a random boggle board. It then takes a string from the user and returns true if the string is made of sequentially adjacent dice, whether they are horizontally, diagonally, or vertically neighboring. Using recursion, BoggleBoard#include? takes the first letter of the user's string and then traverses all possible paths from the occurrences of the letter on the board looking for a match.</p>
+
+<pre><code class=" ruby">class BoggleBoard
+
+  attr_accessor :board
+
+  DICE = [
+          ["A", "A", "E", "E", "G", "N"],
+          ["A", "B", "B", "J", "O", "O"],
+          ["A", "C", "H", "O", "P", "S"],
+          ["A", "F", "F", "K", "P", "S"],
+          ["A", "O", "O", "T", "T", "W"],
+          ["C", "I", "M", "O", "T", "V"],
+          ["D", "E", "I", "L", "R", "X"],
+          ["H", "L", "N", "N", "R", "Z"],
+          ["D", "I", "S", "T", "T", "Y"],
+          ["E", "E", "G", "H", "N", "W"],
+          ["E", "E", "I", "N", "S", "U"],
+          ["E", "H", "R", "T", "V", "W"],
+          ["E", "I", "O", "S", "S", "T"],
+          ["E", "L", "R", "T", "T", "Y"],
+          ["H", "A", "E", "E", "G", "N"],
+          ["A", "I", "M", "N", "Q", "U"]
+        ]
+
+  def initialize
+    @board = []
+    @shake_counter = 0
+  end
+
+  def shake!
+    @board = []
+
+    DICE.each do |die|
+      @board &lt;&lt; Node.new(die.sample)
+    end
+
+    @shake_counter += 1
+    populate_neighbors
+    display
+
+  end
+
+  def display
+    @board.each_slice(4) do |slice|
+      slice.each do |node|
+        print node.value
+      end
+      puts ""
+   end
+  end
+
+  # Generate neighbors for each dice in the board.
+  def populate_neighbors
+    @board.each_with_index do |node, node_index|
+      node.neighbors &lt;&lt; @board[node_index + 1] unless node_index % 4 == 3 # right neighbor
+      node.neighbors &lt;&lt; @board[node_index - 1] unless node_index % 4 == 0 #left neighbor
+      node.neighbors &lt;&lt; @board[node_index + 4] unless node_index &gt; 11 #bottom neighbor
+      node.neighbors &lt;&lt; @board[node_index - 4] unless node_index &lt; 4 #top neighbor etc...
+      node.neighbors &lt;&lt; @board[node_index - 3] unless (node_index % 4 == 3) || (node_index &lt; 4) #top right
+      node.neighbors &lt;&lt; @board[node_index + 3] unless (node_index % 4 == 0) || (node_index &gt; 11) # bottom left
+      node.neighbors &lt;&lt; @board[node_index + 5] unless (node_index % 4 == 3) || (node_index &gt; 11) # bottom right
+      node.neighbors &lt;&lt; @board[node_index - 5] unless (node_index % 4 == 0) || (node_index &lt; 4) # top left
+    end
+  end
+
+  # Traverse possible paths that may match the user's input.
+  def include?(string, root = nil, used = [])
+    string.upcase!
+    used == [] ? paths = @board : paths = root.neighbors
+    paths.each do |node| # First time look at the entire board. Next time node children.
+      if (node.value == string[0]) &amp;&amp; !used.include?(node)
+        used &lt;&lt; node
+        return true if string == node.value # Base Case
+        return include?(string[1..-1], node, used) # Recursion
+      end
+      used = []
+    end
+
+    return false
+
+  end
+
+end
+
+
+class Node
+
+  attr_accessor :neighbors, :value
+
+  def initialize(letter)
+    @value = letter
+    @neighbors = []
+  end
+
+end
+
+OurBoard = BoggleBoard.new()  
+OurBoard.shake!
+
+puts "==============================="
+
+end_program = ""  
+until end_program == "quit"  
+  puts "please enter a string to search for"
+  end_program = gets.chomp!
+  if OurBoard.include?(end_program) == true
+    p true
+  else
+    return end_program
+  end
+end  
+</code></pre>]]></content:encoded></item><item><title><![CDATA[Sorting Algorithms in Ruby]]></title><description><![CDATA[<p>Having enjoyed excellent posts on sorting algorithms I wanted to share my implementation of common sorting algorithms in Ruby. There are some great <a href="http://www.sorting-algorithms.com">visualizations of sorting algorithms</a> especially on Mike Bostock's blog such as the <a href="http://bost.ocks.org/mike/shuffle/">Fisher-Yates Shuffle</a>, <a href="http://bl.ocks.org/mbostock/1243323">merge sort</a>, and <a href="http://bl.ocks.org/mbostock/1582075">quick sort</a>. Taking a leaf out of Jesse La Russo's</p>]]></description><link>http://127.0.0.1:2368/sorting-algorithms-in-ruby/</link><guid isPermaLink="false">582c4890-87fa-42ab-9b83-0e00cbf2f113</guid><dc:creator><![CDATA[Harry Whelchel]]></dc:creator><pubDate>Sun, 18 May 2014 01:02:35 GMT</pubDate><content:encoded><![CDATA[<p>Having enjoyed excellent posts on sorting algorithms I wanted to share my implementation of common sorting algorithms in Ruby. There are some great <a href="http://www.sorting-algorithms.com">visualizations of sorting algorithms</a> especially on Mike Bostock's blog such as the <a href="http://bost.ocks.org/mike/shuffle/">Fisher-Yates Shuffle</a>, <a href="http://bl.ocks.org/mbostock/1243323">merge sort</a>, and <a href="http://bl.ocks.org/mbostock/1582075">quick sort</a>. Taking a leaf out of Jesse La Russo's <a href="http://jlarusso.github.io/blog/2013/04/30/sorting-algorithms-in-ruby/">blog</a> below are my implementations of common sorting algorithms in Ruby.</p>
+
+<h3 id="insertionsort">Insertion Sort</h3>
+
+<ol>
+<li>Begin at the second element. Compare the element to the element prior. Swap if less than the element prior.</li>
+<li>Increment by one element. Compare this element to prior two elements. Insert accordingly.</li>
+<li>Continue incrementing by one element and comparing that element to all prior sorted elements until the list is fully sorted.</li>
+</ol>
+
+<pre><code class=" ruby">def insertion_sort(list)  
+  (1...list.length).each do |i| 
+      k = i
+      while k &gt; 0 &amp;&amp; list[k] &lt; list[k-1]
+        list[k], list[k-1] = list[k-1], list[k]
+        k -= 1
+      end
+  end
+  list
+end  
+</code></pre>
+
+<h3 id="selectionsort">Selection Sort</h3>
+
+<ol>
+<li>Start at first element of unsorted list. Look for the smallest element in the list. Swap with left most unsorted element. </li>
+<li>Move to the second element. Swap with smallest element of this unsorted list.</li>
+</ol>
+
+<pre><code class="ruby">def selection_sort(list)  
+  (0...list.length).each do |i|
+    k = i
+
+    (i+1...list.length).each do |j|
+      k = j if list[j] &lt; list[k]
+    end
+
+    if k != i
+      list[i],list[k] = list[k],list[i] 
+    end
+  end
+  list
+end  
+</code></pre>
+
+<h3 id="bubblesort">Bubble Sort</h3>
+
+<ol>
+<li>Start at first element. Compare adjacent pairs. Swap if out of order.</li>
+<li>Iterate through the list repeatedly. Each iteration requires one less comparison.</li>
+</ol>
+
+<pre><code class="ruby">def bubble_sort(list)  
+  begin
+
+    swapped = false
+    (1...list.length).each do |i|
+
+      if list[i] &lt; list[i-1]
+        list[i], list[i-1] = list[i-1],list[i]
+        swapped = true
+      end
+
+    end
+
+  end until !swapped
+  list
+end  
+</code></pre>
+
+<h3 id="shellsort">Shell Sort</h3>
+
+<p>(Insertion sort on sublists or sublists of elements allowing swap of elements far apart.)  </p>
+
+<ol>
+<li>Determine sublists by splitting the list in half repeatedly.</li>
+<li>Insertion sort of the elements in each sublist.</li>
+<li>When the sublist is one or zero elements long then the list is sorted.</li>
+</ol>
+
+<pre><code class="ruby">def shell_sort(list)  
+  gap = list.length/2
+  while gap &gt; 0
+
+    # Insertion Sort
+    (gap...list.length).each do |i|
+      k = i
+      while k &gt;= gap &amp;&amp; list[k] &lt; list[k-gap]
+        list[k], list[k-gap] = list[k-gap], list[k]
+        k -= gap
+      end
+    end
+
+    gap /= 2
+  end
+  list
+end  
+</code></pre>
+
+<h3 id="mergesort">Merge Sort</h3>
+
+<ol>
+<li>Divide the unsorted list into sublists around a pivot.</li>
+<li>Recursively call merge sort on the sublists.</li>
+<li>Merge the results of the recursive calls.</li>
+</ol>
+
+<pre><code class="ruby">def merge_sort(list)  
+  return list if list.length &lt;= 1
+  left = []
+  right = []
+  pivot = list.length / 2
+
+  list.each_with_index do |e,i|
+    left &lt;&lt; e if i &lt; pivot
+  end
+
+  list.each_with_index do |e,i|
+    right &lt;&lt; e if i &gt;= pivot
+  end
+
+  left = merge_sort(left)
+  right = merge_sort(right)
+
+  merge(left, right)
+end
+
+def merge(left, right)  
+  result = []
+  while left.length &gt; 0 || right.length &gt; 0
+    if left.length &gt; 0 &amp;&amp; right.length &gt; 0
+      result &lt;&lt; (left[0] &lt;= right[0] ? left.shift : right.shift)
+    elsif left.length &gt; 0
+      result &lt;&lt; left.shift
+    else
+      result &lt;&lt; right.shift
+    end
+  end
+  result
+end  
+</code></pre>
+
+<h3 id="heapsort">Heap Sort</h3>
+
+<ol>
+<li>Build a heap out of the data. The heap is a tree data structure where the parent node is always greater than or equal to its child nodes across the entire heap. </li>
+<li>Remove the root of the heap and insert in sorted array. Reconstruct heap and repeat.</li>
+</ol>
+
+<pre><code>def heap_sort(list)  
+  count = list.length
+
+  heapify(list, count)
+
+  last = count - 1
+  while last &gt; 0
+    p "#{list[last]}, #{list[0]}"
+    list[last], list[0] = list[0], list[last]
+    last -= 1
+    sift_down(list,0,last)
+  end
+
+  list
+end
+
+def heapify(list, count)  
+  start = (count - 2) / 2
+
+  while start &gt;= 0
+    sift_down(list,start,count-1)
+    start -= 1
+  end
+end
+
+def sift_down(list, start, last)  
+  root = start
+
+  while root * 2 + 1 &lt;= last
+    child = root * 2 + 1
+    swap = root
+
+    swap = child if list[swap] &lt; list[child]
+    if child + 1 &lt;= last &amp;&amp; list[swap] &lt; list[child+1]
+      swap = child + 1 
+    end
+    if swap != root
+      list[root], list[swap] = list[swap], list[root]
+      root = swap
+    else
+      return
+    end
+  end
+end  
+</code></pre>
+
+<h3 id="quicksort">Quick Sort</h3>
+
+<ol>
+<li>Divide list into two smaller lists.</li>
+<li>Pick a pivot. </li>
+<li>Reorder list so that all elements less than the pivot come before it and all elements greater than the pivot come after it. </li>
+<li>Recursively apply steps 2 and 3 to the sublists until base case of size 0 or 1 lists is reached.</li>
+</ol>
+
+<pre><code>def quick_sort(list)
+
+  return list if list.length &lt;= 1
+
+  pivot = list[list.length/2]
+
+  less, greater = list.partition {|e| e &lt; pivot}
+
+  quick_sort(less) + [pivot] + quick_sort(greater)
+
+end  
+</code></pre>]]></content:encoded></item></channel></rss>
