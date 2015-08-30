@@ -1,5 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>http://127.0.0.1:2368/</link><generator>Ghost 0.6</generator><lastBuildDate>Wed, 12 Aug 2015 01:21:54 GMT</lastBuildDate><atom:link href="http://127.0.0.1:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Streams in JavaScript]]></title><description><![CDATA[<p><em>Time is but the stream I go a-fishing in.</em></p>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>http://127.0.0.1:2368/</link><generator>Ghost 0.6</generator><lastBuildDate>Sun, 30 Aug 2015 19:08:27 GMT</lastBuildDate><atom:link href="http://127.0.0.1:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[A Review - Warden]]></title><description><![CDATA[<p><a href="https://github.com/hassox/warden">Warden</a> is a simple and powerful authentication mechanism for <a href="https://github.com/rack/rack">rack</a> based ruby applications. Using a rack middleware, it injects an object into the rack environment which can be used to authenticate incoming requests.</p>
+
+<p>At its core, Warden uses 'manager', 'proxy', and 'strategy' abstractions to accomplish its goals. The library shines</p>]]></description><link>http://127.0.0.1:2368/a-review-warden/</link><guid isPermaLink="false">be8030ae-da3b-4371-8a75-44feddc26e53</guid><dc:creator><![CDATA[Harry Whelchel]]></dc:creator><pubDate>Sun, 30 Aug 2015 19:04:01 GMT</pubDate><content:encoded><![CDATA[<p><a href="https://github.com/hassox/warden">Warden</a> is a simple and powerful authentication mechanism for <a href="https://github.com/rack/rack">rack</a> based ruby applications. Using a rack middleware, it injects an object into the rack environment which can be used to authenticate incoming requests.</p>
+
+<p>At its core, Warden uses 'manager', 'proxy', and 'strategy' abstractions to accomplish its goals. The library shines in its implementation of the strategy pattern -- allowing for imaginative and unplanned authentication mechanisms. The manager highlights the power and simplicity of web middlewares as it injects the authentication object into the rack environment. Finally the proxy serves as the authentication strategies' context running them lazily on demand.</p>
+
+<p>The authors' chosen abstractions map well to the problem domain -- however even greater clarity and robustness in design can be achieved through extracting responsiblities of the proxy and manager and through a greater use of dependency injection.</p>
+
+<h2 id="termstoknow">Terms to Know</h2>
+
+<ul>
+<li><strong>Strategy</strong> a pattern for when you have a clear task to accomplish, but more than one way to do it.</li>
+<li><strong>Virtual Proxy</strong> a pattern for delaying creation of an object until it is needed.</li>
+<li><strong>Rack Middlware</strong> a minimal interface for ruby webservers. Imagine the web request moves through a pipe and each section of pipe is a middleware.</li>
+<li><strong>Extensibility</strong> is the ease at which new implementations (how something is accomplished) can be introduced while maintaining the existing interface (what is accomplished)</li>
+<li><strong>Composition</strong> a recognition of distinct concepts that make up a larger whole. A classic example is the car composed of wheels, engine, brakes, and more.</li>
+<li><strong>Single Responsiblity Principle</strong> states an object should only have "one reason to change" decoupling the actors in the system.</li>
+<li><strong>Dependency Inversion</strong> highlights the benefit of depending on abstractions over concretions -- both for higher level and low level concerns. If both high level and low level concepts depend on abstract interfaces then high level concepts achieve greater independence from low level concerns.</li>
+</ul>
+
+<h2 id="thestrategy">The Strategy</h2>
+
+<p>Warden strategies are responsible for housing specific authentication logic such as checking a username and password against a database or checking for the presence of a "remember me" cookie. Warden does not come with any concrete strategies -- only a <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/strategies/base.rb">base class</a> that defines the required api. The strategy class is the strongest element of the library due to the extensibility and composability it brings.</p>
+
+<p>Valid strategies must only implement <code>authenticate!</code> and optionally <code>valid?</code>. Because the public api is only one method, developers can easily implement their own strategies to fit their authentication needs.</p>
+
+<p><a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L337-L356">Snippet Source</a></p>
+
+<pre><code class="language-ruby">  def _run_strategies_for(scope, args)
+    # ... omitted code
+
+  (strategies || args).each do |name|
+    strategy = _fetch_strategy(name, scope)
+    next unless strategy &amp;&amp; !strategy.performed? &amp;&amp; strategy.valid?
+
+    strategy._run! # this calls the underlying authenticate!
+  end
+
+  # ... omitted code
+end  
+</code></pre>
+
+<p>The strategy builds on the value of composition by recognizing that often a particular task must be accomplished by an actor in the system, but there are numerous ways to accomplish the task. Therefore the mechanism of accomplishing a task is separated and abstracted from <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L337">the actor</a>. In this way the actor looses knowledge (a good thing!) of how it accomplishes its task while still getting the job done.</p>
+
+<h2 id="themanager">The Manager</h2>
+
+<p><a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb">Warden's manager</a> is responsible for managing the library's lifecycle from injecting the authentication object to handling failed requests. The strength of the <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L34-L36">middleware pattern</a> should be noted as it creates a pipeline of logic which can modify a web request as it enters the web server and can modify the response as it leaves. Despite the elegance of the middleware pattern the manager does not feel as focused or general as it could be.</p>
+
+<p>In my analysis I identified four responsibilities of the manager. It <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L33">injects the authentication object</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L41-L47">handles failed requests</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L52-L54">runs the callback lifecycle</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L21">handles library configuration</a>, and provides methods for <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L56-L88">user deserialization and serialization configuration</a>.</p>
+
+<p>The manager would benefit from a <code>UserProxy</code>responsible for configuration and implementing user session (de)serialization. It would also benefit from an <code>UnauthenticatedResponse</code> which would process unauthenticated requests routing them to a redirect, custom response, or the failure app. Through the addition of these classes, the manager would become solely responsible for coordinating the authentication logic amongst these objects.</p>
+
+<p><a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L123-L134">Snippet Source</a></p>
+
+<pre><code class="language-ruby">def call_failure_app(env, options = {})  
+  if config.failure_app
+    options.merge!(:attempted_path =&gt; ::Rack::Request.new(env).fullpath) # Concrete Request
+    env["warden.options"] = options
+    # ... omitted code
+
+    config.failure_app.call(env).to_a
+  else
+    # ... omitted code
+  end
+end  
+</code></pre>
+
+<p>In the manager the config, proxy, and rack request are all instantiated by the manager internally. As a result the manager is coupled to these specific objects. If instead these objects were injected at initialization of the manager or through a method call, the manager would no longer be concerned with the type of the object but only whether it can respond to the necessary messages.</p>
+
+<p><a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/manager.rb#L30-L49">Snippet Source</a></p>
+
+<pre><code class="language-ruby">def call(env) # :nodoc:  
+  # ... omitted code
+
+  env['warden'] = Proxy.new(env, self) # Concrete Proxy
+  result = catch(:warden) do
+    @app.call(env) # Abstract app and env
+  end
+
+  # ... omitted code
+end  
+</code></pre>
+
+<p>Despite the multiple responsibilities and concrete dependencies the manager does a great job with the injection of the app and env as abstractions--a middleware requirement.</p>
+
+<h2 id="theproxy">The Proxy</h2>
+
+<p>The proxy is a virtual proxy to a number of objects most importantly the hash of authentication strategies. The laziness of the proxy is a very nice design choice, improving application performance, while introducing limited complexity in the code. However the proxy also suffers from numerous responsibilities and reliance on concretions.</p>
+
+<p><a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb">The proxy</a> does a lot and has access to a lot. It <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L360-L368">lookups the strategies</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L30">caches the strategies</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L337-L356">runs the authentication strategies</a>, provides access to warden <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L36-L38">errors</a>, allows <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L205-L219">reading</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L164-L182">writing</a>, <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L254-L269">deletion</a> of the user from the session, and <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L329-L334">manages authentication scopes</a>. Many of these responsibilities are facilitated by the <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L27-L32">initialization</a> of the proxy with the rack env, manager, and config stored in instance variables.</p>
+
+<p>The proxy could benefit from an <code>Authenticator</code> that runs the strategies, a <code>StrategyCache</code> that lookups and caches the strategies, a <code>UserProxy</code> for higher level read, write, delete access to the user in the session, <code>ScopeManager</code> which would manage the authentication scopes and their config. The introduction of a few additional objects would do a lot to simplify the complexity of the class.</p>
+
+<p><a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L27-L46">Snippet Source</a></p>
+
+<pre><code class="language-ruby"># Abstract
+def initialize(env, manager)  
+  @env, @users, @winning_strategies, @locked = env, {}, {}, false
+  @manager, @config = manager, manager.config.dup
+  @strategies = Hash.new { |h,k| h[k] = {} }
+  manager._run_callbacks(:on_request, self)
+end
+
+# Concrete
+def errors  
+  @env[ENV_WARDEN_ERRORS] ||= Errors.new
+end
+
+def session_serializer  
+  @session_serializer ||= Warden::SessionSerializer.new(@env)
+end  
+</code></pre>
+
+<p>The proxy is also dogged by a few concrete dependencies. The errors and session serializer could be injected making this code more extensible. However the proxy also benefits from the presence of abstract manager and env dependencies.</p>
+
+<h2 id="close">Close</h2>
+
+<p>As an everyday user of <a href="https://github.com/plataformatec/devise">Devise</a> I love the simple and extendable authentication mechanism Warden offers. Warden not only is easy to use it is a fun read and provides excellent case studies in the strategy pattern, middleware pattern, and proxy. If you are interested in learning more I would encourage you to look at Devise's use of Warden. There you will see a mature implementation of the library with <a href="https://github.com/plataformatec/devise/tree/v3.4.1/lib/devise/strategies">multiple sophisticated strategies</a>.</p>]]></content:encoded></item><item><title><![CDATA[Streams in JavaScript]]></title><description><![CDATA[<p><em>Time is but the stream I go a-fishing in.</em></p>
 
 <p>-Henry David Thoreau</p>
 
