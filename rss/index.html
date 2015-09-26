@@ -1,5 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>http://127.0.0.1:2368/</link><generator>Ghost 0.6</generator><lastBuildDate>Mon, 31 Aug 2015 02:00:47 GMT</lastBuildDate><atom:link href="http://127.0.0.1:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Warden - A Review]]></title><description><![CDATA[<p><a href="https://github.com/hassox/warden">Warden</a> is a simple and powerful authentication mechanism for <a href="https://github.com/rack/rack">rack</a> based ruby applications. Using a rack middleware, it injects an object into the rack environment which can be used to authenticate incoming requests.</p>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>http://127.0.0.1:2368/</link><generator>Ghost 0.6</generator><lastBuildDate>Sat, 26 Sep 2015 17:03:13 GMT</lastBuildDate><atom:link href="http://127.0.0.1:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Pundit - A Review]]></title><description><![CDATA[<h2 id="problem">Problem</h2>
+
+<p>As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user's team and are off to the races!</p>
+
+<p>Your service grows (hooray!) and</p>]]></description><link>http://127.0.0.1:2368/pundit-a-review/</link><guid isPermaLink="false">744567e9-ead0-4528-a777-d942d844a08e</guid><dc:creator><![CDATA[Harry Whelchel]]></dc:creator><pubDate>Sat, 26 Sep 2015 16:46:54 GMT</pubDate><content:encoded><![CDATA[<h2 id="problem">Problem</h2>
+
+<p>As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user's team and are off to the races!</p>
+
+<p>Your service grows (hooray!) and users now want separate teams inside their organization. They want certain users to have admin privileges to handle billing and team management. Users accidentally delete things and want them back so you add the ability to undo. What data is accessible to users quickly becomes unaddressable in an ad-hoc fashion. This is where <a href="https://github.com/elabs/pundit">Pundit</a> comes in.</p>
+
+<h2 id="pundit">Pundit</h2>
+
+<p>Pundit is an authorization library for managing access to resources in an application. Pundit offers two abstractions--Policies and Scopes. Policies confirm a user has access to a specific resource. Scopes filter collections for a given user. Most commonly Pundit is found in the controller and view layer but can also be used in service objects. It effectively leverages convention over configuration, dependency injection, and inheritance to make authorization robust and maintainable.</p>
+
+<p>You can understand Pundit's usage in 5 minutes of reading the readme and can understand the source code in 10 - 15 minutes more. Whether your authorization needs are simple or complex, Pundit is an excellent solution for localizing authorization logic and ensuring data authorization is considered for every endpoint in your application.</p>
+
+<h2 id="policies">Policies</h2>
+
+<p>Using convention over configuration, Policies are easy to implement and understand. Each <code>Policy</code>'s name begins with the name of the model it protects and is suffixed with <code>Policy</code>. The <code>Policy</code> implements query methods that map to controller's actions. The naming convention is then used by the <code>PolicyFinder</code> to infer which policy to lookup when <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> is called.</p>
+
+<pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy  
+  attr_reader :user, :article
+
+  def initialize(user, article)
+    @user    = user
+    @article = article
+  end
+
+  def show?
+    user.payed_for?(article) &amp;&amp; !article.deleted?
+  end
+end  
+</code></pre>
+
+<p>The <code>Policy</code> api could be improved by returning the resource when <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> is successful. Doing so would avoid the need to conditionally check the success of <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> in the controller. When this hypothetical <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> api is paired with the <a href="https://github.com/plataformatec/responders">responders</a> gem, authorization protection is introducible without any concessions of clarity.</p>
+
+<pre><code class="language-ruby">class Api::ArticlesController &lt; Api::BaseController
+
+  def show
+    respond_with :api, article, serializer: ArticleSerializer
+  end
+
+  private
+
+  def article
+    @article ||= authorize Article.find(params[:id])
+  end
+end  
+</code></pre>
+
+<h2 id="scopes">Scopes</h2>
+
+<p>Developers generally append scopes in the controller or add <a href="http://apidock.com/rails/ActiveRecord/Scoping/Default/ClassMethods/default_scope">default scopes</a> to filter collections to a specific user. Default scopes can become unwieldy and sometimes dangerous. Calling <a href="http://apidock.com/rails/ActiveRecord/Scoping/Default/ClassMethods/unscoped">unscoped</a> on a relation removes <strong>all scopes</strong> which is rarely the intent. Manually appending scopes in the controller can work for small applications but it is too easy to accidentally forget one.</p>
+
+<p>Pundit solves this problem with <code>Scope</code> objects. On initialization scope objects are provided a user and a collection. The <code>Scope</code> implements a <code>resolve</code> method which filters the collection. Pretty simple.</p>
+
+<pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy  
+  class Scope
+    attr_reader :user, :scope
+
+    def initialize(user, scope)
+      @user  = user
+      @scope = scope
+    end
+
+    def resolve
+      if user.owner?
+        scope.where(team: user.teams)
+      elsif user.team_admin?
+        scope.where(team: user.current_team)
+      else
+        scope.where(user: user)
+      end
+    end
+  end
+end  
+</code></pre>
+
+<p>Controllers are provided with a <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> helper method to simplify the call. <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> works similarly to <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> in looking up the necessary <code>Scope</code> based on naming convention and calling <code>resolve</code>.</p>
+
+<pre><code class="language-ruby">class Api::ArticlesController &lt; Api::BaseController
+
+  def index
+    respond_with :api, articles, each_serializer: ArticleSerializer
+  end
+
+  private
+
+  def articles
+    @articles ||= policy_scope Article
+  end
+end  
+</code></pre>
+
+<p>To avoid hitting the database more than once, it is common to memoize a collection. Pundit encourages using <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> in the views as well as in the controller providing opportunities to inadvertently hit the database multiple times. An optional <code>cache</code> flag for <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> could mitigate any performance issues while keeping the existing api usable.</p>
+
+<pre><code class="language-ruby">def articles  
+  policy_scope Article, cache: true
+end  
+</code></pre>
+
+<h2 id="policyfinder">PolicyFinder</h2>
+
+<p>The <a href="https://github.com/elabs/pundit/blob/master/lib/pundit/policy_finder.rb"><code>PolicyFinder</code></a> is the workhorse of Pundit looking up Policies and Scopes behind the scenes. <a href="https://github.com/elabs/pundit/blob/master/lib/pundit/policy_finder.rb#L35"><code>find</code></a> relies on naming conventions to infer what Policy or Scope to load, but the convention does not have to be observed. If the object or its class implements <code>policy_class</code> that will be used first. Otherwise <a href="https://github.com/elabs/pundit/blob/145d7592c0028c26e61e8a9569ed3440323eaa40/lib/pundit/policy_finder.rb#L35"><code>find</code></a> guesses at the resource's class name.</p>
+
+<p>Scopes are <a href="https://github.com/elabs/pundit/blob/master/lib/pundit/policy_finder.rb#L9">found</a> by first <a href="https://github.com/elabs/pundit/blob/145d7592c0028c26e61e8a9569ed3440323eaa40/lib/pundit/policy_finder.rb#L35"><code>find</code></a>ing the Policy and then looking for a corresponding scope in the Policy namespace. Therefore, if a controller only exposed an <code>index</code> action it would require a boilerplate Policy to use <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a>. Adding a concrete <code>ScopeFinder</code> and an abstract <code>Finder</code> would make Scopes a more flexible feature for application developers.</p>
+
+<h2 id="errors">Errors</h2>
+
+<p>Pundit has an excellent error story as the provided errors help prevent mis-exposure of data. Pundit offers two controller <a href="http://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a>s, <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L104"><code>verify_authorized</code></a> and <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L108"><code>verify_policy_scoped</code></a>. If <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> or <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> have not been called, <a href="https://github.com/elabs/pundit/blob/master/lib/pundit.rb#L30"><code>AuthorizationNotPerformed</code></a> or <a href="https://github.com/elabs/pundit/blob/master/lib/pundit.rb#L31"><code>PolicyScopingNotPerformed</code></a> are raised respectively.</p>
+
+<p>If a <code>Policy</code> is found but no query method matches the controller action the <a href="https://github.com/elabs/pundit/blob/master/lib/pundit.rb#L13"><code>NotAuthorizedError</code></a> is raised. With the <a href="http://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a>s and the <a href="https://github.com/elabs/pundit/blob/master/lib/pundit.rb#L13"><code>NotAuthorizedError</code></a>, Pundit interjects itself into the development process reminding developers of the need to consider authorization logic for each new endpoint and conscientiously opt-out of Pundit's protection.</p>
+
+<h2 id="close">Close</h2>
+
+<p>Pundit is an excellent gem for basic to complex authorization rules. Policies and Scopes tell your application's authorization story clearly and succinctly allowing for easy implementation and maintenance. Its <a href="http://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a> verification callbacks ensure your future self or other developers do not forget to consider authorization logic for each new endpoint. These two features of ease of use and safety checks makes Pundit an absolute win for any team and their users.</p>
+
+<p>What do y'all think of Pundit?</p>]]></content:encoded></item><item><title><![CDATA[Warden - A Review]]></title><description><![CDATA[<p><a href="https://github.com/hassox/warden">Warden</a> is a simple and powerful authentication mechanism for <a href="https://github.com/rack/rack">rack</a> based ruby applications. Using a rack middleware, it injects an object into the rack environment which can be used to authenticate incoming requests.</p>
 
 <p>At its core, Warden uses 'manager', 'proxy', and 'strategy' abstractions to accomplish its goals. The library shines</p>]]></description><link>http://127.0.0.1:2368/a-review-warden/</link><guid isPermaLink="false">be8030ae-da3b-4371-8a75-44feddc26e53</guid><dc:creator><![CDATA[Harry Whelchel]]></dc:creator><pubDate>Sun, 30 Aug 2015 19:04:01 GMT</pubDate><content:encoded><![CDATA[<p><a href="https://github.com/hassox/warden">Warden</a> is a simple and powerful authentication mechanism for <a href="https://github.com/rack/rack">rack</a> based ruby applications. Using a rack middleware, it injects an object into the rack environment which can be used to authenticate incoming requests.</p>
 
