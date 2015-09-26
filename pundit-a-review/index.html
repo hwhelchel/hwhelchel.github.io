@@ -13,20 +13,20 @@
 	<link rel="stylesheet" type="text/css" href="../assets/css/style.css?v=1d375d063f" />
 
 	<link rel="canonical" href="index.html" />
-    
+
     <meta property="og:site_name" content="Harry Whelchel" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Pundit - A Review" />
     <meta property="og:description" content="Problem As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user&#x27;s team and..." />
-    <meta property="og:url" content="http://127.0.0.1:2368/pundit-a-review/" />
+    <meta property="og:url" content="http://harrywhelchel.com/pundit-a-review/" />
     <meta property="article:published_time" content="2015-09-26T16:46:54.606Z" />
     <meta property="article:modified_time" content="2015-09-26T16:48:42.742Z" />
-    
+
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Pundit - A Review" />
     <meta name="twitter:description" content="Problem As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user&#x27;s team and..." />
-    <meta name="twitter:url" content="http://127.0.0.1:2368/pundit-a-review/" />
-    
+    <meta name="twitter:url" content="http://harrywhelchel.com/pundit-a-review/" />
+
     <script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -36,12 +36,12 @@
         "@type": "Person",
         "name": "Harry Whelchel",
         "image": "//www.gravatar.com/avatar/5ff1765fe9816e12a6d819353a10debf?d=404",
-        "url": "http://127.0.0.1:2368/author/harry-whelchel",
+        "url": "http://harrywhelchel.com/author/harry-whelchel",
         "sameAs": null,
         "description": null
     },
     "headline": "Pundit - A Review",
-    "url": "http://127.0.0.1:2368/pundit-a-review/",
+    "url": "http://harrywhelchel.com/pundit-a-review/",
     "datePublished": "2015-09-26T16:46:54.606Z",
     "dateModified": "2015-09-26T16:48:42.742Z",
     "description": "Problem As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user&#x27;s team and..."
@@ -54,7 +54,7 @@
 </head>
 
 <body class="post-template">
-	
+
 	<nav id="menu">
 	<a class="close-button">Close</a>
 	<div class="nav-wrapper">
@@ -65,10 +65,10 @@
 		</ul>
 	</div>
 </nav>
-	
+
 	<section id="wrapper">
 		<a class="hidden-close"></a>
-		
+
 
 <div class="progress-container">
 	<span class="progress-bar"></span>
@@ -86,14 +86,14 @@
 		</nav>
 		<h1 class="post-title">Pundit - A Review</h1>
 		<span class="post-meta"><a href="../author/harry-whelchel/index.html">Harry Whelchel</a> | <time datetime="2015-09-26">26 Sep 2015</time></span>
-		
+
 	</div>
 </header>
 
 <main class="content" role="main">
 	<article class="post">
 		<div class="inner">
-		
+
 			<section class="post-content">
 				<h2 id="problem">Problem</h2>
 
@@ -111,7 +111,7 @@
 
 <p>Using convention over configuration, Policies are easy to implement and understand. Each <code>Policy</code>'s name begins with the name of the model it protects and is suffixed with <code>Policy</code>. The <code>Policy</code> implements query methods that map to controller's actions. The naming convention is then used by the <code>PolicyFinder</code> to infer which policy to lookup when <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> is called.</p>
 
-<pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy  
+<pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy
   attr_reader :user, :article
 
   def initialize(user, article)
@@ -122,7 +122,7 @@
   def show?
     user.payed_for?(article) &amp;&amp; !article.deleted?
   end
-end  
+end
 </code></pre>
 
 <p>The <code>Policy</code> api could be improved by returning the resource when <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> is successful. Doing so would avoid the need to conditionally check the success of <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> in the controller. When this hypothetical <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> api is paired with the <a href="https://github.com/plataformatec/responders">responders</a> gem, authorization protection is introducible without any concessions of clarity.</p>
@@ -138,7 +138,7 @@ end
   def article
     @article ||= authorize Article.find(params[:id])
   end
-end  
+end
 </code></pre>
 
 <h2 id="scopes">Scopes</h2>
@@ -147,7 +147,7 @@ end
 
 <p>Pundit solves this problem with <code>Scope</code> objects. On initialization scope objects are provided a user and a collection. The <code>Scope</code> implements a <code>resolve</code> method which filters the collection. Pretty simple.</p>
 
-<pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy  
+<pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy
   class Scope
     attr_reader :user, :scope
 
@@ -166,7 +166,7 @@ end
       end
     end
   end
-end  
+end
 </code></pre>
 
 <p>Controllers are provided with a <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> helper method to simplify the call. <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> works similarly to <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L37"><code>authorize</code></a> in looking up the necessary <code>Scope</code> based on naming convention and calling <code>resolve</code>.</p>
@@ -182,14 +182,14 @@ end
   def articles
     @articles ||= policy_scope Article
   end
-end  
+end
 </code></pre>
 
 <p>To avoid hitting the database more than once, it is common to memoize a collection. Pundit encourages using <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> in the views as well as in the controller providing opportunities to inadvertently hit the database multiple times. An optional <code>cache</code> flag for <a href="https://github.com/elabs/pundit/blob/8d73705ca6886b757c9d41e13c1cb32a7b97334b/lib/pundit.rb#L47"><code>policy_scope</code></a> could mitigate any performance issues while keeping the existing api usable.</p>
 
-<pre><code class="language-ruby">def articles  
+<pre><code class="language-ruby">def articles
   policy_scope Article, cache: true
-end  
+end
 </code></pre>
 
 <h2 id="policyfinder">PolicyFinder</h2>
@@ -210,28 +210,28 @@ end
 
 <p>What do y'all think of Pundit?</p>
 			</section>
-			
+
 			<section class="post-info">
-				
+
 				<div class="post-share">
-					<a class="twitter" href="https://twitter.com/share?text=Pundit - A Review&url=http://127.0.0.1:2368/pundit-a-review/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+					<a class="twitter" href="https://twitter.com/share?text=Pundit - A Review&url=http://harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
 						<i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
 					</a>
-					<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://127.0.0.1:2368/pundit-a-review/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+					<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
 						<i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
 					</a>
-					<a class="googleplus" href="https://plus.google.com/share?url=http://127.0.0.1:2368/pundit-a-review/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+					<a class="googleplus" href="https://plus.google.com/share?url=http://harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
 						<i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
 					</a>
 					<div class="clear"></div>
 				</div>
-				
+
 				<aside class="post-tags">
-					
+
 				</aside>
-				
+
 				<div class="clear"></div>
-				
+
 				<aside class="post-author">
 						<figure class="post-author-avatar">
 							<img src="http://www.gravatar.com/avatar/5ff1765fe9816e12a6d819353a10debf?d=404" alt="Harry Whelchel" />
@@ -243,7 +243,7 @@ end
 				</aside>
 
 			</section>
-			
+
 
 			<section class="post-comments">
 				<a id="show-disqus" class="post-comments-activate">Show Comments</a>
@@ -269,7 +269,7 @@ end
 
 
 		<div id="body-class" style="display: none;" class="post-template"></div>
-	
+
 		<footer id="footer">
 			<div class="inner">
 				<section class="credits">
