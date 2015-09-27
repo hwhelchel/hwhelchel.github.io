@@ -1,4 +1,4 @@
-/* RESET - http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
+/* RESET - https://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
 html,
 body,
 div,
@@ -188,13 +188,13 @@ sub {
   from {
     -webkit-transform: rotate(0);
     /* Saf3.1+, Chrome */
-  
+
     -moz-transform: rotate(0);
     /* FF3.5+ */
-  
+
     -ms-transform: rotate(0);
     /* IE9 */
-  
+
     -o-transform: rotate(0);
     /* Opera 10.5 */
     transform: rotate(0);
@@ -203,13 +203,13 @@ sub {
   50% {
     -webkit-transform: rotate(180deg);
     /* Saf3.1+, Chrome */
-  
+
     -moz-transform: rotate(180deg);
     /* FF3.5+ */
-  
+
     -ms-transform: rotate(180deg);
     /* IE9 */
-  
+
     -o-transform: rotate(180deg);
     /* Opera 10.5 */
     transform: rotate(180deg);
@@ -218,13 +218,13 @@ sub {
   to {
     -webkit-transform: rotate(0);
     /* Saf3.1+, Chrome */
-  
+
     -moz-transform: rotate(0);
     /* FF3.5+ */
-  
+
     -ms-transform: rotate(0);
     /* IE9 */
-  
+
     -o-transform: rotate(0);
     /* Opera 10.5 */
     transform: rotate(0);
@@ -275,7 +275,7 @@ a:hover {
 /* Typography */
 /*
 	All typography (and layout) based on a modular scale using 12 & 14 px values scaled in accordance the golden ratio (1.618)
-	http://modularscale.com/scale/?px1=14&px2=12&ra1=1.618&ra2=0
+	https://modularscale.com/scale/?px1=14&px2=12&ra1=1.618&ra2=0
 	Remember to keep margins consistent and try to avoid margin-top. If everything has an appropriate margin-bottom we don't need one and vertical rhythm will be kept consistent
 */
 h1,
