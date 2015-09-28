@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="https://purl.org/dc/elements/1.1/" xmlns:content="https://purl.org/rss/1.0/modules/content/" xmlns:atom="https://www.w3.org/2005/Atom" version="2.0" xmlns:media="https://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>https://harrywhelchel.com/</link><generator>Ghost 0.6</generator><lastBuildDate>Sun, 27 Sep 2015 16:02:20 GMT</lastBuildDate><atom:link href="https://harrywhelchel.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Pundit - A Review]]></title><description><![CDATA[<h2 id="problem">Problem</h2>
+<rss xmlns:dc="https://purl.org/dc/elements/1.1/" xmlns:content="https://purl.org/rss/1.0/modules/content/" xmlns:atom="https://www.w3.org/2005/Atom" version="2.0" xmlns:media="https://search.yahoo.com/mrss/"><channel><title><![CDATA[Harry Whelchel]]></title><description><![CDATA[Ruby, Javascript, and More.]]></description><link>https://harrywhelchel.com/</link><generator>Ghost 0.6</generator><lastBuildDate>Mon, 28 Sep 2015 23:39:27 GMT</lastBuildDate><atom:link href="https://harrywhelchel.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Pundit - A Review]]></title><description><![CDATA[<h2 id="problem">Problem</h2>
 
 <p>As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user's team and are off to the races!</p>
 
@@ -153,9 +153,6 @@ end
 
     strategy._run! # this calls the underlying authenticate!
   end
-
-  # ... omitted code
-end
 </code></pre>
 
 <p>The strategy builds on the value of composition by recognizing that often a particular task must be accomplished by an actor in the system, but there are numerous ways to accomplish the task. Therefore the mechanism of accomplishing a task is separated and abstracted from <a href="https://github.com/hassox/warden/blob/v1.2.3/lib/warden/proxy.rb#L337">the actor</a>. In this way the actor loses knowledge (a good thing!) of how it accomplishes its task while still getting the job done.</p>
@@ -172,7 +169,8 @@ end
 
 <pre><code class="language-ruby">def call_failure_app(env, options = {})
   if config.failure_app
-    options.merge!(:attempted_path =&gt; ::Rack::Request.new(env).fullpath) # Concrete Request
+    # Concrete Request
+    options.merge!(attempted_path: ::Rack::Request.new(env).fullpath)
     env["warden.options"] = options
     # ... omitted code
 
