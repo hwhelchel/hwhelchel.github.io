@@ -1,4 +1,4 @@
-/* RESET - https://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
+/* RESET - http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
 html,
 body,
 div,
@@ -275,7 +275,7 @@ a:hover {
 /* Typography */
 /*
 	All typography (and layout) based on a modular scale using 12 & 14 px values scaled in accordance the golden ratio (1.618)
-	https://modularscale.com/scale/?px1=14&px2=12&ra1=1.618&ra2=0
+	http://modularscale.com/scale/?px1=14&px2=12&ra1=1.618&ra2=0
 	Remember to keep margins consistent and try to avoid margin-top. If everything has an appropriate margin-bottom we don't need one and vertical rhythm will be kept consistent
 */
 h1,
