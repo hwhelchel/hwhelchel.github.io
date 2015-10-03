@@ -18,30 +18,30 @@
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Pundit - A Review" />
     <meta property="og:description" content="Problem As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user&#x27;s team and..." />
-    <meta property="og:url" content="http://www.harrywhelchel.com/pundit-a-review/" />
+    <meta property="og:url" content="https://www.harrywhelchel.com/pundit-a-review/" />
     <meta property="article:published_time" content="2015-09-26T16:46:54.606Z" />
     <meta property="article:modified_time" content="2015-09-27T16:01:23.179Z" />
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Pundit - A Review" />
     <meta name="twitter:description" content="Problem As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user&#x27;s team and..." />
-    <meta name="twitter:url" content="http://www.harrywhelchel.com/pundit-a-review/" />
+    <meta name="twitter:url" content="https://www.harrywhelchel.com/pundit-a-review/" />
 
     <script type="application/ld+json">
 {
-    "@context": "http://schema.org",
+    "@context": "https://schema.org",
     "@type": "Article",
     "publisher": "Harry Whelchel",
     "author": {
         "@type": "Person",
         "name": "Harry Whelchel",
         "image": "//www.gravatar.com/avatar/5ff1765fe9816e12a6d819353a10debf?d=404",
-        "url": "http://www.harrywhelchel.com/author/harry-whelchel",
+        "url": "https://www.harrywhelchel.com/author/harry-whelchel",
         "sameAs": null,
         "description": null
     },
     "headline": "Pundit - A Review",
-    "url": "http://www.harrywhelchel.com/pundit-a-review/",
+    "url": "https://www.harrywhelchel.com/pundit-a-review/",
     "datePublished": "2015-09-26T16:46:54.606Z",
     "dateModified": "2015-09-27T16:01:23.179Z",
     "description": "Problem As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user&#x27;s team and..."
@@ -99,7 +99,7 @@
 
 <p>As your users create and manage data, you need to decide what is visible and editable by any user in the application. You set out by scoping your domain resources to the user or to the user's team and are off to the races!</p>
 
-<p>Your service grows (hooray!) and users now want separate teams inside their organization. They want certain users to have admin privileges to handle billing and team management. Users accidentally delete things and want them back so you add the ability to undo. What data is accessible to users quickly becomes unaddressable in an ad-hoc fashion. This is where <a href="http://github.com/elabs/pundit">Pundit</a> comes in.</p>
+<p>Your service grows (hooray!) and users now want separate teams inside their organization. They want certain users to have admin privileges to handle billing and team management. Users accidentally delete things and want them back so you add the ability to undo. What data is accessible to users quickly becomes unaddressable in an ad-hoc fashion. This is where <a href="https://github.com/elabs/pundit">Pundit</a> comes in.</p>
 
 <h2 id="pundit">Pundit</h2>
 
@@ -109,7 +109,7 @@
 
 <h2 id="policies">Policies</h2>
 
-<p>Using convention over configuration, Policies are easy to implement and understand. Each <code>Policy</code>'s name begins with the name of the model it protects and is suffixed with <code>Policy</code>. The <code>Policy</code> implements query methods that map to controller's actions. The naming convention is then used by the <code>PolicyFinder</code> to infer which policy to lookup when <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> is called.</p>
+<p>Using convention over configuration, Policies are easy to implement and understand. Each <code>Policy</code>'s name begins with the name of the model it protects and is suffixed with <code>Policy</code>. The <code>Policy</code> implements query methods that map to controller's actions. The naming convention is then used by the <code>PolicyFinder</code> to infer which policy to lookup when <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> is called.</p>
 
 <pre><code class="language-ruby">class ArticlePolicy &lt; ApplicationPolicy
   attr_reader :user, :article
@@ -125,7 +125,7 @@
 end
 </code></pre>
 
-<p>The <code>Policy</code> api could be improved by returning the resource when <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> is successful. Doing so would avoid the need to conditionally check the success of <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> in the controller. When this hypothetical <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> api is paired with the <a href="http://github.com/plataformatec/responders">responders</a> gem, authorization protection is introducible without any concessions of clarity.</p>
+<p>The <code>Policy</code> api could be improved by returning the resource when <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> is successful. Doing so would avoid the need to conditionally check the success of <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> in the controller. When this hypothetical <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> api is paired with the <a href="https://github.com/plataformatec/responders">responders</a> gem, authorization protection is introducible without any concessions of clarity.</p>
 
 <pre><code class="language-ruby">class Api::ArticlesController &lt; Api::BaseController
 
@@ -143,7 +143,7 @@ end
 
 <h2 id="scopes">Scopes</h2>
 
-<p>Developers generally append scopes in the controller or add <a href="http://apidock.com/rails/ActiveRecord/Scoping/Default/ClassMethods/default_scope">default scopes</a> to filter collections to a specific user. Default scopes can become unwieldy and sometimes dangerous. Calling <a href="http://apidock.com/rails/ActiveRecord/Scoping/Default/ClassMethods/unscoped">unscoped</a> on a relation removes <strong>all scopes</strong> which is rarely the intent. Manually appending scopes in the controller can work for small applications but it is too easy to accidentally forget one.</p>
+<p>Developers generally append scopes in the controller or add <a href="https://apidock.com/rails/ActiveRecord/Scoping/Default/ClassMethods/default_scope">default scopes</a> to filter collections to a specific user. Default scopes can become unwieldy and sometimes dangerous. Calling <a href="https://apidock.com/rails/ActiveRecord/Scoping/Default/ClassMethods/unscoped">unscoped</a> on a relation removes <strong>all scopes</strong> which is rarely the intent. Manually appending scopes in the controller can work for small applications but it is too easy to accidentally forget one.</p>
 
 <p>Pundit solves this problem with <code>Scope</code> objects. On initialization scope objects are provided a user and a collection. The <code>Scope</code> implements a <code>resolve</code> method which filters the collection. Pretty simple.</p>
 
@@ -169,7 +169,7 @@ end
 end
 </code></pre>
 
-<p>Controllers are provided with a <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> helper method to simplify the call. <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> works similarly to <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> in looking up the necessary <code>Scope</code> based on naming convention and calling <code>resolve</code>.</p>
+<p>Controllers are provided with a <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> helper method to simplify the call. <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> works similarly to <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> in looking up the necessary <code>Scope</code> based on naming convention and calling <code>resolve</code>.</p>
 
 <pre><code class="language-ruby">class Api::ArticlesController &lt; Api::BaseController
 
@@ -185,7 +185,7 @@ end
 end
 </code></pre>
 
-<p>To avoid hitting the database more than once, it is common to memoize a collection. Pundit encourages using <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> in the views as well as in the controller providing opportunities to inadvertently hit the database multiple times. An optional <code>cache</code> flag for <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> could mitigate any performance issues while keeping the existing api usable.</p>
+<p>To avoid hitting the database more than once, it is common to memoize a collection. Pundit encourages using <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> in the views as well as in the controller providing opportunities to inadvertently hit the database multiple times. An optional <code>cache</code> flag for <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> could mitigate any performance issues while keeping the existing api usable.</p>
 
 <pre><code class="language-ruby">def articles
   policy_scope Article, cache: true
@@ -194,19 +194,19 @@ end
 
 <h2 id="policyfinder">PolicyFinder</h2>
 
-<p>The <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb"><code>PolicyFinder</code></a> is the workhorse of Pundit looking up Policies and Scopes behind the scenes. <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L35"><code>find</code></a> relies on naming conventions to infer what Policy or Scope to load, but the convention does not have to be observed. If the object or its class implements <code>policy_class</code> that will be used first. Otherwise <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L35"><code>find</code></a> guesses at the resource's class name.</p>
+<p>The <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb"><code>PolicyFinder</code></a> is the workhorse of Pundit looking up Policies and Scopes behind the scenes. <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L35"><code>find</code></a> relies on naming conventions to infer what Policy or Scope to load, but the convention does not have to be observed. If the object or its class implements <code>policy_class</code> that will be used first. Otherwise <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L35"><code>find</code></a> guesses at the resource's class name.</p>
 
-<p>Scopes are <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L9">found</a> by first <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L35"><code>find</code></a>ing the Policy and then looking for a corresponding scope in the Policy namespace. Therefore, if a controller only exposed an <code>index</code> action it would require a boilerplate Policy to use <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a>. Adding a concrete <code>ScopeFinder</code> and an abstract <code>Finder</code> would make Scopes a more flexible feature for application developers.</p>
+<p>Scopes are <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L9">found</a> by first <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit/policy_finder.rb#L35"><code>find</code></a>ing the Policy and then looking for a corresponding scope in the Policy namespace. Therefore, if a controller only exposed an <code>index</code> action it would require a boilerplate Policy to use <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a>. Adding a concrete <code>ScopeFinder</code> and an abstract <code>Finder</code> would make Scopes a more flexible feature for application developers.</p>
 
 <h2 id="errors">Errors</h2>
 
-<p>Pundit has an excellent error story as the provided errors help prevent mis-exposure of data. Pundit offers two controller <a href="http://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a>s, <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L102"><code>verify_authorized</code></a> and <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L106"><code>verify_policy_scoped</code></a>. If <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> or <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> have not been called, <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L30"><code>AuthorizationNotPerformed</code></a> or <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L31"><code>PolicyScopingNotPerformed</code></a> are raised respectively.</p>
+<p>Pundit has an excellent error story as the provided errors help prevent mis-exposure of data. Pundit offers two controller <a href="https://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a>s, <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L102"><code>verify_authorized</code></a> and <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L106"><code>verify_policy_scoped</code></a>. If <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L37"><code>authorize</code></a> or <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L47"><code>policy_scope</code></a> have not been called, <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L30"><code>AuthorizationNotPerformed</code></a> or <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L31"><code>PolicyScopingNotPerformed</code></a> are raised respectively.</p>
 
-<p>If a <code>Policy</code> is found but no query method matches the controller action the <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L13"><code>NotAuthorizedError</code></a> is raised. With the <a href="http://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a>s and the <a href="http://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L13"><code>NotAuthorizedError</code></a>, Pundit interjects itself into the development process reminding developers of the need to consider authorization logic for each new endpoint and conscientiously opt-out of Pundit's protection.</p>
+<p>If a <code>Policy</code> is found but no query method matches the controller action the <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L13"><code>NotAuthorizedError</code></a> is raised. With the <a href="https://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a>s and the <a href="https://github.com/elabs/pundit/blob/v1.0.1/lib/pundit.rb#L13"><code>NotAuthorizedError</code></a>, Pundit interjects itself into the development process reminding developers of the need to consider authorization logic for each new endpoint and conscientiously opt-out of Pundit's protection.</p>
 
 <h2 id="close">Close</h2>
 
-<p>Pundit is an excellent gem for basic to complex authorization rules. Policies and Scopes tell your application's authorization story clearly and succinctly allowing for easy implementation and maintenance. Its <a href="http://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a> verification callbacks ensure your future self or other developers do not forget to consider authorization logic for each new endpoint. These two features of ease of use and safety checks makes Pundit an absolute win for any team and their users.</p>
+<p>Pundit is an excellent gem for basic to complex authorization rules. Policies and Scopes tell your application's authorization story clearly and succinctly allowing for easy implementation and maintenance. Its <a href="https://apidock.com/rails/v4.2.1/AbstractController/Callbacks/ClassMethods/after_action"><code>after_action</code></a> verification callbacks ensure your future self or other developers do not forget to consider authorization logic for each new endpoint. These two features of ease of use and safety checks makes Pundit an absolute win for any team and their users.</p>
 
 <p>What do y'all think of Pundit?</p>
 			</section>
@@ -214,13 +214,13 @@ end
 			<section class="post-info">
 
 				<div class="post-share">
-					<a class="twitter" href="http://twitter.com/share?text=Pundit - A Review&url=http://www.harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+					<a class="twitter" href="https://twitter.com/share?text=Pundit - A Review&url=https://www.harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
 						<i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
 					</a>
-					<a class="facebook" href="http://www.facebook.com/sharer/sharer.php?u=http://www.harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+					<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://www.harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
 						<i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
 					</a>
-					<a class="googleplus" href="http://plus.google.com/share?url=http://www.harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+					<a class="googleplus" href="https://plus.google.com/share?url=https://www.harrywhelchel.com/pundit-a-review/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
 						<i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
 					</a>
 					<div class="clear"></div>
@@ -234,7 +234,7 @@ end
 
 				<aside class="post-author">
 						<figure class="post-author-avatar">
-							<img src="http://www.gravatar.com/avatar/5ff1765fe9816e12a6d819353a10debf?d=404" alt="Harry Whelchel" />
+							<img src="https://www.gravatar.com/avatar/5ff1765fe9816e12a6d819353a10debf?d=404" alt="Harry Whelchel" />
 						</figure>
 					<div class="post-author-bio">
 						<h4 class="post-author-name"><a href="../author/harry-whelchel/index.html">Harry Whelchel</a></h4>
@@ -273,8 +273,8 @@ end
 		<footer id="footer">
 			<div class="inner">
 				<section class="credits">
-					<span class="credits-theme">Theme <a href="http://github.com/zutrinken/attila">Attila</a> by <a href="http://zutrinken.com" rel="nofollow">zutrinken</a></span>
-					<span class="credits-software">Published with <a href="http://ghost.org">Ghost</a></span>
+					<span class="credits-theme">Theme <a href="https://github.com/zutrinken/attila">Attila</a> by <a href="https://zutrinken.com" rel="nofollow">zutrinken</a></span>
+					<span class="credits-software">Published with <a href="https://ghost.org">Ghost</a></span>
 				</section>
 			</div>
 		</footer>
